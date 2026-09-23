@@ -64,9 +64,19 @@ feed_file_matches() {
 #		;;
 #esac
 
-free_kib="$(df -Pk /overlay 2>/dev/null | awk 'NR == 2 { print $4 }')"
-[ -n "$free_kib" ] || free_kib="$(df -Pk / 2>/dev/null | awk 'NR == 2 { print $4 }')"
-case "${free_kib:-0}" in *[!0‑9]*) free_kib=0 ;; esac
+free_kib=""
+# 优先读取overlay
+if mountpoint -q /overlay; then
+    free_kib="$(df -Pk /overlay 2>/dev/null | awk 'NR == 2 { print $4 }')"
+fi
+# overlay不存在或者拿不到数值，读根分区 /
+if [ -z "${free_kib}" ]; then
+    free_kib="$(df -Pk / 2>/dev/null | awk 'NR == 2 { print $4 }')"
+fi
+# 只保留数字，非数字置0
+case "${free_kib:-0}" in
+    ''|*[!0-9]*) free_kib=0 ;;
+esac
 [ "$free_kib" -ge 1024 ] ||
 	fail "insufficient persistent storage to install the bootstrap package (${free_kib} KiB free)"
 exit 0
