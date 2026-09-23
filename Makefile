@@ -17,7 +17,7 @@ define Package/luci-app-ikev2-manager
   CATEGORY:=LuCI
   SUBMENU:=3. Applications
   TITLE:=IKEv2 Manager for OpenWrt
-	URL:=https://github.com/dreamboxone/ikev2-openwrt
+	URL:=https://github.com/z163330/ikev2-openwrt
   DEPENDS:= \
 	+luci-base \
 	+rpcd-mod-file \
